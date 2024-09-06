@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.28.xsd">
+
+    <changeSet author="a.vasileuski" id="20240905160000-01-create-gender-table" dbms="postgresql">
+        <comment>create gender table</comment>
+        <sqlFile path="migration/user/sql/apply/a-20240905160000-01-create-gender-table.sql"/>
+        <rollback>
+            <sqlFile path="migration/user/sql/undo/u-20240905160000-01-create-gender-table.sql"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="a.vasileuski" id="20240905160000-02-create-user-table" dbms="postgresql">
+        <comment>create user table</comment>
+        <sqlFile path="migration/user/sql/apply/a-20240905160000-02-create-user-table.sql"/>
+        <rollback>
+            <sqlFile path="migration/user/sql/undo/u-20240905160000-02-create-user-table.sql"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="a.vasileuski" id="20240905160000-03-create-auth_token-table" dbms="postgresql">
+        <comment>create auth_token table</comment>
+        <sqlFile path="migration/user/sql/apply/a-20240905160000-03-create-auth_token-table.sql"/>
+        <rollback>
+            <sqlFile path="migration/user/sql/undo/u-20240905160000-03-create-auth_token-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

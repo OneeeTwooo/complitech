@@ -1,0 +1,1 @@
+drop table complitech.auth_token;
