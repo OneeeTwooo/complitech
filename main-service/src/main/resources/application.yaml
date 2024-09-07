@@ -39,8 +39,13 @@ spring:
 
 jwt:
   secret: 12asedgfasdlur2345183ryhbqfqew543qfsgfasdga34
-  accessTokenExpiration: 3600000
+  accessTokenExpiration: 36000000
   refreshTokenExpiration: 604800000
 
 shutdown:
   datetime: "2024-12-01T00:00:00"
+
+pagination:
+  page: 1
+  limit: 20
+  sort: ASC

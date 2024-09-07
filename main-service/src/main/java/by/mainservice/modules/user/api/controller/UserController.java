@@ -3,6 +3,7 @@ package by.mainservice.modules.user.api.controller;
 import by.mainservice.modules.auth.annatation.AdminAccess;
 import by.mainservice.modules.auth.annatation.AllAccess;
 import by.mainservice.modules.user.api.dto.request.UserRequestDto;
+import by.mainservice.modules.user.api.dto.response.UserPageInfoResponseDto;
 import by.mainservice.modules.user.api.dto.response.UserIdResponseDto;
 import by.mainservice.modules.user.api.dto.response.UserResponseDto;
 import by.mainservice.modules.user.service.UserService;
@@ -20,10 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -36,11 +36,15 @@ public class UserController {
     @AllAccess
     @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<UserResponseDto> getAllUsers() {
+    public UserPageInfoResponseDto getAllUsers(
+            @RequestParam(value = "page", required = false, defaultValue = "${pagination.page}") final Integer page,
+            @RequestParam(value = "limit", required = false, defaultValue = "${pagination.limit}") final Integer limit,
+            @RequestParam(value = "sort", required = false, defaultValue = "${pagination.sort}") final String sort
+    ) {
         final var currentUser = userService.getCurrentUser();
         userNotificationService.sendUserRequestNotification(currentUser.getLogin(), "use request GET /users");
 
-        return userService.getAllUsers();
+        return userService.getAllUsers(page, limit, sort);
     }
 
     @AdminAccess

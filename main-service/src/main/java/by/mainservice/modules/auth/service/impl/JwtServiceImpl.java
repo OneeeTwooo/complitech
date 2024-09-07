@@ -1,5 +1,6 @@
 package by.mainservice.modules.auth.service.impl;
 
+import by.mainservice.modules.auth.service.JwtService;
 import by.mainservice.modules.user.core.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class JwtService implements by.mainservice.modules.auth.service.JwtService {
+public class JwtServiceImpl implements JwtService {
 
     private static final String ROLE = "role";
 

@@ -3,6 +3,7 @@ package by.mainservice.modules.auth.service.impl;
 import by.mainservice.common.exception.AuthException;
 import by.mainservice.modules.auth.api.dto.request.AuthRequestDto;
 import by.mainservice.modules.auth.api.dto.response.AuthResponseDto;
+import by.mainservice.modules.auth.core.entity.AuthToken;
 import by.mainservice.modules.auth.core.repository.AuthTokenRepository;
 import by.mainservice.modules.auth.service.AuthTokenService;
 import by.mainservice.modules.auth.service.mapper.AuthTokenMapper;
@@ -24,7 +25,7 @@ public class AuthTokenServiceImpl implements AuthTokenService {
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenMapper authTokenMapper;
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtService;
 
     @Transactional
     @Override
@@ -38,8 +39,15 @@ public class AuthTokenServiceImpl implements AuthTokenService {
         final var accessToken = jwtService.generateToken(user);
         final var refreshToken = jwtService.generateRefreshToken(user);
 
-        final var authToken = authTokenMapper.create(
-                accessToken, refreshToken, user, jwtService.extractExpiration(refreshToken));
+        final var authToken = AuthToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .isRevoked(false)
+                .isExpired(false)
+                .user(user)
+                .refreshTokenExpiry(jwtService.extractExpiration(refreshToken))
+                .build();
+
 
         tokenRepository.saveAndFlush(authToken);
 

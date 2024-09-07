@@ -5,6 +5,7 @@ import by.mainservice.common.exception.PasswordValidationException;
 import by.mainservice.common.exception.ValueNotFoundException;
 import by.mainservice.modules.user.api.dto.request.UserRequestDto;
 import by.mainservice.modules.user.api.dto.response.UserIdResponseDto;
+import by.mainservice.modules.user.api.dto.response.UserPageInfoResponseDto;
 import by.mainservice.modules.user.api.dto.response.UserResponseDto;
 import by.mainservice.modules.user.core.entity.User;
 import by.mainservice.modules.user.core.repository.UserRepository;
@@ -12,19 +13,22 @@ import by.mainservice.modules.user.service.UserService;
 import by.mainservice.modules.user.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService {
+
+    private static final int PAGE_OFFSET = 1;
 
     private final PasswordEncoder passwordEncoder;
     private final DateTimeService dateTimeService;
@@ -33,10 +37,23 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserResponseDto> getAllUsers() {
-        final var allUsers = userRepository.findAll();
+    public UserPageInfoResponseDto getAllUsers(final Integer page, final Integer limit, final String sort) {
 
-        return userMapper.mapEntitiesToUserResponseDtos(allUsers);
+        final var pageRequest = getPageRequest(page, limit, sort);
+
+        final var allUsers = userRepository.findAll(pageRequest);
+
+        final var userInfoResponseDto =
+                allUsers.getContent().stream()
+                        .map(userMapper::mapEntityToUserResponseDto)
+                        .toList();
+
+        return UserPageInfoResponseDto.builder()
+                .page(allUsers.getNumber() + PAGE_OFFSET)
+                .total(allUsers.getTotalPages())
+                .limit(allUsers.getSize())
+                .items(userInfoResponseDto)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -121,5 +138,13 @@ public class UserServiceImpl implements UserService {
             throw new PasswordValidationException(
                     "Пароль должен содержать хотя бы три цифры", INTERNAL_SERVER_ERROR.value());
         }
+    }
+
+    private static PageRequest getPageRequest(final Integer page, final Integer limit, final String sort) {
+        final var finalSort = ASC.name().equalsIgnoreCase(sort) ? ASC : DESC;
+        final var finalLimit = page == -1 ? Integer.MAX_VALUE : limit;
+        final var finalPage = page == -1 ? 0 : page - PAGE_OFFSET;
+
+        return PageRequest.of(finalPage, finalLimit, finalSort, "id");
     }
 }

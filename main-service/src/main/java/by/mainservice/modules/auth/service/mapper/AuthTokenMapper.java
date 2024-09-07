@@ -11,7 +11,13 @@ import java.time.OffsetDateTime;
 @Mapper(config = BaseMapperConfig.class)
 public interface AuthTokenMapper {
 
-    AuthToken create(String accessToken, String refreshToken, User user, OffsetDateTime offsetDateTime);
+    AuthToken create(String accessToken,
+                     String refreshToken,
+                     User user,
+                     OffsetDateTime offsetDateTime,
+                     Boolean isRevoked,
+                     Boolean isExpired
+    );
 
     AuthResponseDto mapEntityToAuthResponseDto(AuthToken authToken);
 }

@@ -1,6 +1,7 @@
 package by.mainservice.modules.auth.filter;
 
-import by.mainservice.modules.auth.service.impl.JwtService;
+import by.mainservice.common.exception.ApplicationRuntimeException;
+import by.mainservice.modules.auth.service.JwtService;
 import by.mainservice.modules.user.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -24,8 +25,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
 
-    private JwtService jwtServiceImpl;
     private UserService userService;
+    private JwtService jwtService;
 
     @Override
     protected void doFilterInternal(
@@ -35,7 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final var requestTokenHeader = request.getHeader(AUTHORIZATION);
 
-        String username = null;
+        String username;
         String jwtToken;
 
         if (requestTokenHeader == null || !requestTokenHeader.startsWith(BEARER)) {
@@ -45,17 +46,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         jwtToken = requestTokenHeader.substring(7);
         try {
-            username = jwtServiceImpl.extractUsername(jwtToken);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Unable to get JWT Token");
-        } catch (ExpiredJwtException e) {
-            System.out.println("JWT Token has expired");
+            username = jwtService.extractUsername(jwtToken);
+        } catch (final IllegalArgumentException e) {
+            throw new ApplicationRuntimeException("Unable to get JWT Token");
+        } catch (final ExpiredJwtException e) {
+            throw new ApplicationRuntimeException("JWT Token has expired");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             final var userDetails = userService.findUserByLogin(username);
 
-            if (jwtServiceImpl.validateToken(jwtToken)) {
+            if (jwtService.validateToken(jwtToken)) {
                 final var authenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -10,7 +10,7 @@ begin
     from complitech.user
     where id between start_id and end_id;
 end;
-$$
+$$ language plpgsql;
 
 --есть второй вариант как эта функция будет работать
 --при создании таблицы для токенов дописать ON DELETE CASCADE на внешнем ключе
