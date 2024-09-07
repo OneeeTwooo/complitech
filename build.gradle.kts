@@ -65,6 +65,9 @@ allprojects {
     rootProject.extra.set("mapstructVersion", "1.6.0")
     rootProject.extra.set("hypersistenceVersion", "3.8.1")
     rootProject.extra.set("opencsvVersion", "5.9")
+    rootProject.extra.set("jjwtVersion", "0.12.6")
+    rootProject.extra.set("springWsVersion", "6.1.12")
+    rootProject.extra.set("opencsvVersion", "5.9")
 
     dependencies {
         compileOnly("org.projectlombok:lombok:${rootProject.extra.get("lombokVersion")}")

@@ -1,5 +1,6 @@
 package by.mainservice.modules.auth.api.controller;
 
+import by.mainservice.modules.auth.annatation.AllAccess;
 import by.mainservice.modules.auth.api.dto.request.AuthRequestDto;
 import by.mainservice.modules.auth.api.dto.response.AuthResponseDto;
 import by.mainservice.modules.auth.service.AuthTokenService;
@@ -22,5 +23,12 @@ public class AuthController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public AuthResponseDto login(@RequestBody final AuthRequestDto authRequestDto) {
         return authTokenService.login(authRequestDto);
+    }
+
+    @AllAccess
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout() {
+        authTokenService.logout();
     }
 }

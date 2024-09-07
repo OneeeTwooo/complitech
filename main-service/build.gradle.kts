@@ -18,10 +18,11 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql:${rootProject.extra.get("postgresVersion")}")
 
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.3.3")
-    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-    implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-api:${rootProject.extra.get("jjwtVersion")}")
+    implementation("io.jsonwebtoken:jjwt-impl:${rootProject.extra.get("jjwtVersion")}")
+    implementation("io.jsonwebtoken:jjwt-jackson:${rootProject.extra.get("jjwtVersion")}")
+    implementation("org.springframework:spring-websocket:${rootProject.extra.get("springWsVersion")}")
+    implementation("org.springframework:spring-messaging:${rootProject.extra.get("springWsVersion")}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:${rootProject.extra.get("springBootVersion")}")
 }

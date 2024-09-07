@@ -5,7 +5,9 @@ import by.mainservice.modules.user.core.entity.GenderType;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record UserRequestDto(
 
         @NotBlank(message = "Логин не заполнен")

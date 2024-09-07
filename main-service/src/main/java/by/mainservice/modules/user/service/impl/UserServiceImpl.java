@@ -12,11 +12,15 @@ import by.mainservice.modules.user.service.UserService;
 import by.mainservice.modules.user.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -81,7 +85,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(final Integer userId) {
         final var user = userRepository.getUserById(userId)
-                .orElseThrow(() -> new ValueNotFoundException("Сотрудник с id [%s] не найден".formatted(userId), 201));
+                .orElseThrow(() -> new ValueNotFoundException(
+                        "Сотрудник с id [%s] не найден".formatted(userId), NOT_FOUND.value()));
 
         userRepository.delete(user);
     }
@@ -91,16 +96,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByLogin(final String login) {
         return userRepository.findUserByLogin(login)
-                .orElseThrow(() -> new ValueNotFoundException("Сотрудник с логином [%s] не найден".formatted(login), 201));
+                .orElseThrow(() -> new ValueNotFoundException(
+                        "Сотрудник с логином [%s] не найден".formatted(login), NOT_FOUND.value()));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Override
+    public void deleteUsersByRange(Integer startId, Integer endId) {
+        userRepository.deleteUsersByRange(startId, endId);
     }
 
     private void validatePassword(final String password) {
         if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
-            throw new PasswordValidationException("Пароль должен содержать хотя бы один специальный символ", 101);
+            throw new PasswordValidationException(
+                    "Пароль должен содержать хотя бы один специальный символ", INTERNAL_SERVER_ERROR.value());
         }
 
         if (!password.matches(".*\\d.*\\d.*\\d.*")) {
-            throw new PasswordValidationException("Пароль должен содержать хотя бы три цифры", 102);
+            throw new PasswordValidationException(
+                    "Пароль должен содержать хотя бы три цифры", INTERNAL_SERVER_ERROR.value());
         }
     }
 }

@@ -21,4 +21,7 @@ public interface UserService {
     
     User findUserByLogin(String login);
 
+    User getCurrentUser();
+
+    void deleteUsersByRange(Integer startId, Integer endId);
 }

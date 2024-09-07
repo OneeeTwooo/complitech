@@ -6,6 +6,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.28.xsd">
 
     <include file="migration/user/changelog-user.xml"/>
-    <!--    <include file="migration/auth/changelog-auth.xml"/>-->
+    <includeAll path="migration/function"/>
 
 </databaseChangeLog>

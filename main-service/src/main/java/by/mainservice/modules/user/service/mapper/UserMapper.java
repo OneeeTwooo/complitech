@@ -11,7 +11,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(config = BaseMapperConfig.class, componentModel = "spring")
+@Mapper(config = BaseMapperConfig.class)
 public interface UserMapper {
 
     UserResponseDto mapEntityToUserResponseDto(User user);

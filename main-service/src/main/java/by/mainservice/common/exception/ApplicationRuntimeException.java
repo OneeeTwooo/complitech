@@ -9,4 +9,8 @@ public class ApplicationRuntimeException extends RuntimeException {
         super(message);
     }
 
+    public ApplicationRuntimeException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
 }
